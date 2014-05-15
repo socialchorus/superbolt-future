@@ -5,4 +5,4 @@ require "superbolt/future/messenger"
 require "superbolt/future/facade"
 require "superbolt/future/app"
 require "superbolt/future/runner/requeue"
-
+require "superbolt/future/spec_helpers"
