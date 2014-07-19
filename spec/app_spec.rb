@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Superbolt::App do 
+describe Superbolt::App do
   let(:app) {
     Superbolt::Future::App.new(name, {logger: logger})
-  } 
+  }
 
   before do
     future_queue.clear
@@ -25,7 +25,7 @@ describe Superbolt::App do
   let(:quit_queue)   { Superbolt::Queue.new("#{name}_#{env}.future.quit") }
 
   context 'when the future message key is in the past' do
-    let(:message) { 
+    let(:message) {
       {
         origin: 'origin',
         event: 'do_something',
@@ -38,9 +38,9 @@ describe Superbolt::App do
 
     it "moves the message from the future queue to the worker queue" do
       future_queue.push(message)
-      
+
       app.run do |arguments|
-        quit_queue.push({message: 'just because'})
+        app.quit
       end
 
       worker_queue.size.should == 1
@@ -49,7 +49,7 @@ describe Superbolt::App do
   end
 
   context 'when the time is in the future' do
-    let(:message) { 
+    let(:message) {
       {
         origin: 'origin',
         event: 'do_something',
@@ -62,9 +62,9 @@ describe Superbolt::App do
 
     it "puts the message back on the future queue" do
       future_queue.push(message)
-      
+
       app.run do |arguments|
-        quit_queue.push({message: 'just because'})
+        app.quit
       end
 
       worker_queue.size.should == 0

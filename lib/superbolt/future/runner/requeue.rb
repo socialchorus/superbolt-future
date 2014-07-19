@@ -3,7 +3,7 @@ module Superbolt
     module Runner
       class Requeue < ::Superbolt::Runner::AckOne
         def subscribe
-          queue.subscribe(ack: true) do |delivery_info, metadata, payload|
+          queue.subscribe(ack: true, block: true) do |delivery_info, metadata, payload|
             message = Superbolt::IncomingMessage.new(delivery_info, payload, channel)
             process(message)
           end
@@ -29,7 +29,7 @@ module Superbolt
           time = parsed_message["future"]
           q = if Time.parse(time) > Time.now
             logger.info("Requeueing message to #{time}")
-            future_queue 
+            future_queue
           else
             logger.info("Sending message #{parsed_message} to worker queue")
             worker_queue
